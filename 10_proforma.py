@@ -7,7 +7,7 @@ plt.rcParams.update({'figure.dpi':130,'font.size':10,'axes.grid':True,'grid.alph
                      'axes.spines.top':False,'axes.spines.right':False})
 NAVY='#1F3864'; ORANGE='#E8912D'; GREY='#9AA0A6'
 
-p=pd.read_csv('output/scored_policies_rated.csv')
+p=pd.read_csv('../outputs/scored_policies_rated.csv')
 ULAE,COMM,TAX,PROFIT,FIXED,ACQ_NEW,ACQ_REN=.08,.12,.025,.05,25.,45.,5.
 CUR=(p[p.is_train==1].actual_total.mean()*(1+ULAE)+FIXED)/(1-COMM-TAX-PROFIT)
 BASE_LAPSE,ELAST,GROWTH=.22,.9,.15
@@ -43,11 +43,11 @@ for mode,lab in [('status_quo','STATUS QUO'),('proposed','PROPOSED PLAN')]:
     fmt=pd.DataFrame({c:[f"{f.loc[r,c]:.1f}%" if r in ('loss_ratio','combined') else f"{f.loc[r,c]:,.0f}"
                           for r in f.index] for c in f.columns}, index=f.index)
     print(fmt.to_string())
-    f.to_csv(f'output/proforma_{mode}.csv')
+    f.to_csv(f'../outputs/proforma_{mode}.csv')
 
 # ---------------- continuous variable treatment ----------------
 print("\n\n=== CONTINUOUS VARIABLES: how we tested GPA and distance ===")
-d=pd.read_csv('policy_coverage.csv'); tr=d[d.is_train==1]
+d=pd.read_csv('../work/policy_coverage.csv'); tr=d[d.is_train==1]
 P=sm.families.Poisson()
 rows=[]
 for var,form in [('gpa','banded'),('gpa','linear'),('gpa','hinge at 2.5'),
@@ -78,5 +78,5 @@ ax.axhline(1,ls='--',c=ORANGE)
 ax.set_xticks(x); ax.set_xticklabels([str(i) for i in g.index],rotation=20,fontsize=8)
 ax.set_xlabel('GPA band'); ax.set_ylabel('Frequency relativity')
 ax.set_title('GPA: no stable pattern once class year is controlled')
-plt.tight_layout(); plt.savefig('output/fig7_gpa.png'); plt.close()
+plt.tight_layout(); plt.savefig('../outputs/fig7_gpa.png'); plt.close()
 print(g.round(3).to_string())

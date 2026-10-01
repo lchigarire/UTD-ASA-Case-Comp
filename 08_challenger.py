@@ -8,7 +8,7 @@ from sklearn.inspection import permutation_importance
 import warnings; warnings.filterwarnings('ignore')
 rng=np.random.RandomState(7)
 
-d=pd.read_csv('policy_coverage.csv')
+d=pd.read_csv('../work/policy_coverage.csv')
 COVS=['Personal Property','Additional Living Expense','Guest Medical','Liability']
 FEATS=['greek_f','off_f','spr_f','gpa','dist','year_n','study_n','gender_n']
 ymap={'Freshman':1,'Sophomore':2,'Junior':3,'Senior':4,'Grad student':5}
@@ -32,7 +32,7 @@ for c in COVS:
     pred_ho[c]=pd.Series(fm.predict(ho[FEATS])*sm_.predict(ho[FEATS]),index=ho.student_id.values)
 
 gbm=pd.DataFrame(pred_ho).sum(axis=1).rename('gbm_pp')
-glm=pd.read_csv('output/scored_policies_rated.csv').set_index('student_id')
+glm=pd.read_csv('../outputs/scored_policies_rated.csv').set_index('student_id')
 h=glm[glm.is_train==0].join(gbm)
 
 print("=== HOLDOUT DISCRIMINATION: GLM vs GBM challenger ===")
@@ -57,4 +57,4 @@ print("\n=== GBM permutation importance, Personal Property frequency ===")
 print(imp.round(5).to_string())
 print("\n-> variables we excluded (gpa, dist, study_n, gender_n) importance share: "
       f"{imp[['gpa','dist','study_n','gender_n']].clip(lower=0).sum()/imp.clip(lower=0).sum():.1%}")
-h.to_csv('output/challenger_comparison.csv')
+h.to_csv('../outputs/challenger_comparison.csv')
